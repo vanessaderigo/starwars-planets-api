@@ -5,10 +5,7 @@ import com.vanessa.starwarsplanetsapi.planet.service.PlanetService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/planets")
@@ -20,5 +17,12 @@ public class PlanetController {
     public ResponseEntity<Planet> create(@RequestBody Planet planet){
         service.create(planet);
         return ResponseEntity.status(HttpStatus.CREATED).body(planet);
+    }
+
+    @GetMapping("{id}")
+    public ResponseEntity<Planet> get(@PathVariable("id") Long id){
+        return service.get(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 }

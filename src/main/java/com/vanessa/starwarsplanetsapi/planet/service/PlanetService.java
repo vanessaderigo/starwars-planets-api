@@ -5,6 +5,8 @@ import com.vanessa.starwarsplanetsapi.planet.repository.PlanetRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class PlanetService {
@@ -13,4 +15,5 @@ public class PlanetService {
     public Planet create(Planet planet){
         return repository.save(planet);
     }
+    public Optional<Planet> get(Long id){ return repository.findById(id);}
 }
