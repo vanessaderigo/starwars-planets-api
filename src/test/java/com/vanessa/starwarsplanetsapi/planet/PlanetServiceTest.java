@@ -1,14 +1,20 @@
 package com.vanessa.starwarsplanetsapi.planet;
 
 import com.vanessa.starwarsplanetsapi.planet.domain.Planet;
+import com.vanessa.starwarsplanetsapi.planet.domain.QueryBuilder;
 import com.vanessa.starwarsplanetsapi.planet.repository.PlanetRepository;
 import com.vanessa.starwarsplanetsapi.planet.service.PlanetService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Example;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static com.vanessa.starwarsplanetsapi.commom.PlanetConstants.INVALID_PLANET;
@@ -47,7 +53,7 @@ public class PlanetServiceTest {
     }
 
     @Test
-    public void getPlanet_ByUnexistingId_ReturnsPlanet(){
+    public void getPlanet_ByUnexistingId_ReturnsNoPlanet(){
         when(repository.findById(1L)).thenReturn(Optional.empty());
         Optional<Planet> sut = service.get(1L);
         assertThat(sut).isEmpty();
@@ -67,6 +73,26 @@ public class PlanetServiceTest {
 
         when(repository.findByName(name)).thenReturn(Optional.empty());
         Optional<Planet> sut = service.getByName(name);
+        assertThat(sut).isEmpty();
+    }
+
+    @Test
+    public void listPlanets_ReturnsAllPlanets(){
+        List<Planet> planets = new ArrayList<>() {{
+            add(PLANET);
+        }};
+        Example<Planet> query = QueryBuilder.makeQuery(new Planet(PLANET.getName(), PLANET.getClimate(), PLANET.getTerrain()));
+        when(repository.findAll(query)).thenReturn(planets);
+        List<Planet> sut = service.list(PLANET.getName(), PLANET.getClimate(), PLANET.getTerrain());
+        assertThat(sut).isNotEmpty();
+        assertThat(sut).hasSize(1);
+        assertThat(sut.getFirst()).isEqualTo(PLANET);
+    }
+
+    @Test
+    public void listPlanets_ReturnsNoPlanets(){
+        when(repository.findAll(ArgumentMatchers.<Example<Planet>>any())).thenReturn(Collections.emptyList());
+        List<Planet> sut = service.list(PLANET.getName(), PLANET.getClimate(), PLANET.getTerrain());
         assertThat(sut).isEmpty();
     }
 }
