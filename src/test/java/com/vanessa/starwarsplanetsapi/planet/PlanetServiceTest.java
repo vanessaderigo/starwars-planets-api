@@ -19,8 +19,8 @@ import java.util.Optional;
 
 import static com.vanessa.starwarsplanetsapi.commom.PlanetConstants.INVALID_PLANET;
 import static com.vanessa.starwarsplanetsapi.commom.PlanetConstants.PLANET;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -53,7 +53,7 @@ public class PlanetServiceTest {
     }
 
     @Test
-    public void getPlanet_ByUnexistingId_ReturnsNoPlanet(){
+    public void getPlanet_ByNonexistentId_ReturnsNoPlanet(){
         when(repository.findById(1L)).thenReturn(Optional.empty());
         Optional<Planet> sut = service.get(1L);
         assertThat(sut).isEmpty();
@@ -68,8 +68,8 @@ public class PlanetServiceTest {
     }
 
     @Test
-    public void getPlanet_ByUnexistingName_ReturnsPlanet(){
-        final String name = "Unexisting name";
+    public void getPlanet_ByNonexistentName_ReturnsNoPlanet(){
+        final String name = "Nonexistent name";
 
         when(repository.findByName(name)).thenReturn(Optional.empty());
         Optional<Planet> sut = service.getByName(name);
@@ -94,5 +94,16 @@ public class PlanetServiceTest {
         when(repository.findAll(ArgumentMatchers.<Example<Planet>>any())).thenReturn(Collections.emptyList());
         List<Planet> sut = service.list(PLANET.getName(), PLANET.getClimate(), PLANET.getTerrain());
         assertThat(sut).isEmpty();
+    }
+
+    @Test
+    public void deletePlanet_ByExistingId_DoesNotThrowAnyException(){
+        assertThatCode(() -> service.delete(1L)).doesNotThrowAnyException();
+    }
+
+    @Test
+    public void deletePlanet_ByNonexistentId_ThrowsException(){
+        doThrow(new RuntimeException()).when(repository).deleteById(99L);
+        assertThatThrownBy(() -> service.delete(99L)).isInstanceOf(RuntimeException.class);
     }
 }

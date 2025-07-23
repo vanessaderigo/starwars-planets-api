@@ -23,10 +23,12 @@ public class PlanetService {
 
     public Optional<Planet> getByName(String name){ return repository.findByName(name); }
 
-    public Optional<Planet> getByClimate(String climate){ return repository.findByClimate(climate); }
-
     public List<Planet> list(String name, String climate, String terrain){
         Example<Planet> query = QueryBuilder.makeQuery(new Planet(name, climate, terrain));
         return repository.findAll(query);
+    }
+
+    public void delete(Long id){
+        repository.deleteById(id);
     }
 }

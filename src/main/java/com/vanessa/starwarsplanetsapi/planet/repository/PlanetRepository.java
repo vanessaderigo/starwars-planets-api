@@ -11,8 +11,6 @@ import java.util.Optional;
 public interface PlanetRepository extends JpaRepository<Planet, Long>, QueryByExampleExecutor<Planet> {
     Optional<Planet> findByName(String name);
 
-    Optional<Planet> findByClimate(String climate);
-
     @Override
     <S extends Planet> List<S> findAll(Example<S> example);
 }
