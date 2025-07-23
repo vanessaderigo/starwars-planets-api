@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/planets")
 @RequiredArgsConstructor
@@ -20,7 +22,7 @@ public class PlanetController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Planet> get(@PathVariable("id") Long id){
+    public ResponseEntity<Planet> getById(@PathVariable("id") Long id){
         return service.get(id)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
@@ -31,5 +33,13 @@ public class PlanetController {
         return service.getByName(name)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Planet>> search(@RequestParam(required = false) String name,
+                                         @RequestParam(required = false) String climate,
+                                         @RequestParam(required = false) String terrain){
+        List<Planet> planets = service.list(name, terrain, climate);
+        return ResponseEntity.ok(planets);
     }
 }
