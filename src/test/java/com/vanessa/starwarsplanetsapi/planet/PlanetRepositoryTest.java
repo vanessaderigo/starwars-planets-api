@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @DataJpaTest
 public class PlanetRepositoryTest {
     @Autowired
-    PlanetRepository repository;
+    private PlanetRepository repository;
 
     @Autowired
     TestEntityManager testEntityManager;
@@ -106,5 +106,13 @@ public class PlanetRepositoryTest {
         Example<Planet> query = QueryBuilder.makeQuery(new Planet());
         List<Planet> response = repository.findAll(query);
         assertThat(response).isEmpty();
+    }
+
+    @Test
+    public void removePlanet_ByExistingId_RemovesPlanetFromDatabase(){
+        Planet planet = testEntityManager.persistFlushFind(PLANET);
+        repository.deleteById(planet.getId());
+        Planet removedPlanet = testEntityManager.find(Planet.class, planet.getId());
+        assertThat(removedPlanet).isNull();
     }
 }
