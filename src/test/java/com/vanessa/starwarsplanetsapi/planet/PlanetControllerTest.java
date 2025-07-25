@@ -12,10 +12,12 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
-import static com.vanessa.starwarsplanetsapi.commom.PlanetConstants.INVALID_PLANET;
-import static com.vanessa.starwarsplanetsapi.commom.PlanetConstants.PLANET;
+import static com.vanessa.starwarsplanetsapi.commom.PlanetConstants.*;
+import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -95,5 +97,29 @@ public class PlanetControllerTest {
     public void getPlanet_ByUnexistingName_ReturnsNotFound() throws Exception {
         mockMvc.perform(get("/planets/name/" + INVALID_PLANET.getName()))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void listPlanets_ReturnsFilteredPlanets() throws Exception{
+        when(service.list(null, null, null)).thenReturn(PLANETS);
+        when(service.list(TATOOINE.getName(), TATOOINE.getTerrain(), TATOOINE.getClimate())).thenReturn(List.of(TATOOINE));
+
+        mockMvc.perform(get("/planets"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(3)));
+
+        mockMvc.perform(get("/planets?" + String.format("name=%s&terrain=%s&climate=%s", TATOOINE.getName(), TATOOINE.getTerrain(), TATOOINE.getClimate())))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0]").value(TATOOINE));
+    }
+
+    @Test
+    public void listPlanets_ReturnsNoPlanets() throws Exception {
+        when(service.list(null, null, null)).thenReturn(Collections.emptyList());
+
+        mockMvc.perform(get("/planets"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(0)));
     }
 }
