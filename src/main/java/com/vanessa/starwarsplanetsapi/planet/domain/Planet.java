@@ -2,6 +2,7 @@ package com.vanessa.starwarsplanetsapi.planet.domain;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,6 +10,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "planets")
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class Planet {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
