@@ -62,10 +62,23 @@ public class PlanetControllerTest {
     @Test
     public void createPlanet_WithExistingName_ReturnsConflict() throws Exception{
         when(service.create(any())).thenThrow(DataIntegrityViolationException.class);
-
         mockMvc.perform(post("/planets")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(PLANET)))
                 .andExpect(status().isConflict());
+    }
+
+    @Test
+    public void getPlanet_ByExistingID_ReturnsPlanet() throws Exception {
+        when(service.get(1L)).thenReturn(Optional.of(PLANET));
+        mockMvc.perform(get("/planets/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").value(PLANET));
+    }
+
+    @Test
+    public void getPlanet_ByUnexistingID_ReturnsNotFound() throws Exception {
+        mockMvc.perform(get("/planets/1"))
+                .andExpect(status().isNotFound());
     }
 }
