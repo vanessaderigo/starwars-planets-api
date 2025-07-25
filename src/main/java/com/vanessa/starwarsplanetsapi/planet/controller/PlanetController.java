@@ -2,6 +2,7 @@ package com.vanessa.starwarsplanetsapi.planet.controller;
 
 import com.vanessa.starwarsplanetsapi.planet.domain.Planet;
 import com.vanessa.starwarsplanetsapi.planet.service.PlanetService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +17,7 @@ public class PlanetController {
     private final PlanetService service;
 
     @PostMapping
-    public ResponseEntity<Planet> create(@RequestBody Planet planet){
+    public ResponseEntity<Planet> create(@RequestBody @Valid Planet planet){
         service.create(planet);
         return ResponseEntity.status(HttpStatus.CREATED).body(planet);
     }
