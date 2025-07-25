@@ -2,10 +2,13 @@ package com.vanessa.starwarsplanetsapi.planet;
 
 import com.vanessa.starwarsplanetsapi.planet.domain.Planet;
 import com.vanessa.starwarsplanetsapi.planet.repository.PlanetRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+
+import java.util.Optional;
 
 import static com.vanessa.starwarsplanetsapi.commom.PlanetConstants.INVALID_PLANET;
 import static com.vanessa.starwarsplanetsapi.commom.PlanetConstants.PLANET;
@@ -19,6 +22,11 @@ public class PlanetRepositoryTest {
 
     @Autowired
     TestEntityManager testEntityManager;
+
+    @AfterEach
+    public void afterEach(){
+        PLANET.setId(null);
+    }
 
     @Test
     public void repositorySave_WithValidData_ReturnsPlanet(){
@@ -43,5 +51,19 @@ public class PlanetRepositoryTest {
         testEntityManager.detach(planet);
         planet.setId(null);
         assertThatThrownBy(() -> repository.save(planet)).isInstanceOf(RuntimeException.class);
+    }
+
+    @Test
+    public void getPlanet_ByExistingId_ReturnsPlanet(){
+        Planet planet = testEntityManager.persistFlushFind(PLANET);
+        Optional<Planet> optional = repository.findById(planet.getId());
+        assertThat(optional).isNotEmpty();
+        assertThat(optional.get()).isEqualTo(PLANET);
+    }
+
+    @Test
+    public void getPlanet_ByUnexistingId_ReturnsNoPlanet(){
+        Optional<Planet> optional = repository.findById(1L);
+        assertThat(optional).isEmpty();
     }
 }
