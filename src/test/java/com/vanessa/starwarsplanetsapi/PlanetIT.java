@@ -38,9 +38,16 @@ public class PlanetIT {
     }
 
     @Test
-    public void getPlanet_ReturnsPlanet(){
+    public void getPlanet_WithExistingId_ReturnsPlanet(){
         ResponseEntity<Planet> sut = restTemplate.getForEntity("/planets/1", Planet.class);
         assertThat(sut.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(sut.getBody()).isEqualTo(TATOOINE);
+    }
+
+    @Test
+    public void getPlanet_WithUnexistingId_ReturnsNotFound() {
+        ResponseEntity<Planet> sut = restTemplate.getForEntity("/planets/99", Planet.class);
+        assertThat(sut.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertThat(sut.getBody()).isNull();
     }
 }
