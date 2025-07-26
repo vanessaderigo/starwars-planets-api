@@ -40,7 +40,7 @@ public class PlanetController {
     public ResponseEntity<List<Planet>> search(@RequestParam(required = false) String name,
                                          @RequestParam(required = false) String climate,
                                          @RequestParam(required = false) String terrain){
-        List<Planet> planets = service.list(name, terrain, climate);
+        List<Planet> planets = service.list(name, climate, terrain);
         return ResponseEntity.ok(planets);
     }
 

@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 
+import java.util.Arrays;
+
 import static com.vanessa.starwarsplanetsapi.commom.PlanetConstants.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -63,5 +65,32 @@ public class PlanetIT {
         ResponseEntity<Planet> sut = restTemplate.getForEntity("/planets/name/nonExistingName", Planet.class);
         assertThat(sut.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
         assertThat(sut.getBody()).isNull();
+    }
+
+    @Test
+    public void listPlanets_ReturnsAllPlanets() {
+        ResponseEntity<Planet[]> sut = restTemplate.getForEntity("/planets", Planet[].class);
+        assertThat(sut.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(sut.getBody()).hasSize(3);
+        assertThat(sut.getBody()[0]).isEqualTo(TATOOINE);
+    }
+
+    @Test
+    public void listPlanets_ByClimate_ReturnsPlanets() {
+        ResponseEntity<Planet[]> sut = restTemplate.getForEntity("/planets?climate=" + TATOOINE.getClimate(), Planet[].class);
+
+        assertThat(sut.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(sut.getBody()).isNotNull();
+        assertThat(Arrays.stream(sut.getBody()).toList()).hasSize(1);
+        assertThat(sut.getBody()[0]).isEqualTo(TATOOINE);
+    }
+
+    @Test
+    public void listPlanets_ByTerrain_ReturnsPlanets() {
+        ResponseEntity<Planet[]> sut = restTemplate.getForEntity("/planets?terrain=" + TATOOINE.getTerrain(),
+                Planet[].class);
+        assertThat(sut.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(sut.getBody()).hasSize(1);
+        assertThat(sut.getBody()[0]).isEqualTo(TATOOINE);
     }
 }
