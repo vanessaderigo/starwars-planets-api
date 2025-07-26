@@ -4,9 +4,9 @@ spring:
     name: starwars-planets-api
 
   datasource:
-    url: ${DATASOURCE_URL}
-    username: ${DATASOURCE_USER}
-    password: ${DATASOURCE_PASSWORD}
+    url: jdbc:mysql://localhost:3306/starwars
+    username: user
+    password: 1234567
 
   jpa:
     hibernate:
