@@ -10,8 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 
-import static com.vanessa.starwarsplanetsapi.commom.PlanetConstants.PLANET;
-import static com.vanessa.starwarsplanetsapi.commom.PlanetConstants.TATOOINE;
+import static com.vanessa.starwarsplanetsapi.commom.PlanetConstants.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ActiveProfiles("it")
@@ -23,13 +22,19 @@ public class PlanetIT {
     private TestRestTemplate restTemplate;
 
     @Test
-    public void createPlanet_ReturnsCreated(){
+    public void createPlanet_WithValidData_ReturnsCreated(){
         ResponseEntity<Planet> sut = restTemplate.postForEntity("/planets", PLANET, Planet.class);
         assertThat(sut.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         assertThat(sut.getBody().getId()).isNotNull();
         assertThat(sut.getBody().getName()).isEqualTo(PLANET.getName());
         assertThat(sut.getBody().getClimate()).isEqualTo(PLANET.getClimate());
         assertThat(sut.getBody().getTerrain()).isEqualTo(PLANET.getTerrain());
+    }
+
+    @Test
+    public void createPlanet_WithInvalidData_ReturnsUnprocessableEntity() {
+        ResponseEntity<Planet> sut = restTemplate.postForEntity("/planets", INVALID_PLANET, Planet.class);
+        assertThat(sut.getStatusCode()).isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
     @Test
