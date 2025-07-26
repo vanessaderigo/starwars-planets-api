@@ -5,6 +5,9 @@ import com.vanessa.starwarsplanetsapi.planet.domain.QueryBuilder;
 import com.vanessa.starwarsplanetsapi.planet.repository.PlanetRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
@@ -13,6 +16,7 @@ import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static com.vanessa.starwarsplanetsapi.commom.PlanetConstants.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -41,11 +45,29 @@ public class PlanetRepositoryTest {
         assertThat(sut.getTerrain()).isEqualTo(planet.getTerrain());
     }
 
-    @Test
-    public void repositorySave_WithInvalidData_ThrowsException(){
-        Planet emptyPlanet = new Planet();
-        assertThatThrownBy(() -> repository.save(emptyPlanet)).isInstanceOf(RuntimeException.class);
-        assertThatThrownBy(() -> repository.save(INVALID_PLANET)).isInstanceOf(RuntimeException.class);
+    @ParameterizedTest
+    @MethodSource("providesInvalidPlanets")
+    public void repositorySave_WithInvalidData_ThrowsException(Planet planet){
+        assertThatThrownBy(() -> repository.save(planet)).isInstanceOf(RuntimeException.class);
+    }
+
+    private static Stream<Arguments> providesInvalidPlanets() {
+        return Stream.of(
+                Arguments.of(new Planet(null, "climate", "terrain")),
+                Arguments.of(new Planet("name", null, "terrain")),
+                Arguments.of(new Planet("name", "climate", null)),
+                Arguments.of(new Planet(null,null, "terrain")),
+                Arguments.of(new Planet(null,"climate", null)),
+                Arguments.of(new Planet("name",null, null)),
+                Arguments.of(new Planet(null,null, null)),
+                Arguments.of(new Planet("","climate", "terrain")),
+                Arguments.of(new Planet("name","", "terrain")),
+                Arguments.of(new Planet("name","climate", "")),
+                Arguments.of(new Planet("","", "terrain")),
+                Arguments.of(new Planet("","climate", "")),
+                Arguments.of(new Planet("name","", "")),
+                Arguments.of(new Planet("","", ""))
+        );
     }
 
     @Test
