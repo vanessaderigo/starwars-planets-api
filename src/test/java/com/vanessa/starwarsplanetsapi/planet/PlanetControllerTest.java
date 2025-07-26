@@ -103,7 +103,7 @@ public class PlanetControllerTest {
     @Test
     public void listPlanets_ReturnsFilteredPlanets() throws Exception{
         when(service.list(null, null, null)).thenReturn(PLANETS);
-        when(service.list(TATOOINE.getName(), TATOOINE.getTerrain(), TATOOINE.getClimate())).thenReturn(List.of(TATOOINE));
+        when(service.list(TATOOINE.getName(), TATOOINE.getClimate(), TATOOINE.getTerrain())).thenReturn(List.of(TATOOINE));
 
         mockMvc.perform(get("/planets"))
                 .andExpect(status().isOk())
