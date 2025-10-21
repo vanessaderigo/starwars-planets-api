@@ -1,5 +1,6 @@
 package com.vanessa.starwarsplanetsapi.service;
 
+import com.vanessa.starwarsplanetsapi.metrics.MetricsConfiguration;
 import com.vanessa.starwarsplanetsapi.domain.Planet;
 import com.vanessa.starwarsplanetsapi.domain.QueryBuilder;
 import com.vanessa.starwarsplanetsapi.repository.PlanetRepository;
@@ -16,10 +17,12 @@ import java.util.Optional;
 public class PlanetService {
     private final PlanetRepository repository;
     private final Counter createdPlanetsCounter;
+    private final MetricsConfiguration metrics;
 
     public Planet create(Planet planet){
         Planet saved = repository.save(planet);
         createdPlanetsCounter.increment();
+        metrics.incrementActivePlanets();
         return saved;
     }
 
@@ -33,6 +36,9 @@ public class PlanetService {
     }
 
     public void delete(Long id){
-        repository.deleteById(id);
+        if (repository.existsById(id)){
+            repository.deleteById(id);
+            metrics.decrementActivePlanets();
+        }
     }
 }
