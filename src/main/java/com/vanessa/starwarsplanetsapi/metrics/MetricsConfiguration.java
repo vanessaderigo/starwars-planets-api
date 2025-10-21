@@ -4,6 +4,7 @@ import com.vanessa.starwarsplanetsapi.repository.PlanetRepository;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.Gauge;
 import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -45,5 +46,12 @@ public class MetricsConfiguration {
 
     public void decrementActivePlanets(){
         activePlanets.decrementAndGet();
+    }
+
+    @Bean
+    public Timer planetCreationTimer(MeterRegistry meterRegistry){
+        return Timer.builder("planet_creation_duration")
+                .description("Time taken to create a planet")
+                .register(meterRegistry);
     }
 }

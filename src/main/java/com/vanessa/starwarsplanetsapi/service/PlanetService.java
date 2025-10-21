@@ -5,6 +5,7 @@ import com.vanessa.starwarsplanetsapi.domain.Planet;
 import com.vanessa.starwarsplanetsapi.domain.QueryBuilder;
 import com.vanessa.starwarsplanetsapi.repository.PlanetRepository;
 import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.Timer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
@@ -17,13 +18,16 @@ import java.util.Optional;
 public class PlanetService {
     private final PlanetRepository repository;
     private final Counter createdPlanetsCounter;
+    private final Timer planetCreationTimer;
     private final MetricsConfiguration metrics;
 
     public Planet create(Planet planet){
-        Planet saved = repository.save(planet);
-        createdPlanetsCounter.increment();
-        metrics.incrementActivePlanets();
-        return saved;
+        return planetCreationTimer.record(() -> {
+            Planet saved = repository.save(planet);
+            createdPlanetsCounter.increment();
+            metrics.incrementActivePlanets();
+            return saved;
+        });
     }
 
     public Optional<Planet> get(Long id){ return repository.findById(id); }
