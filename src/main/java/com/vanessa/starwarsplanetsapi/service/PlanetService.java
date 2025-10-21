@@ -3,6 +3,7 @@ package com.vanessa.starwarsplanetsapi.service;
 import com.vanessa.starwarsplanetsapi.domain.Planet;
 import com.vanessa.starwarsplanetsapi.domain.QueryBuilder;
 import com.vanessa.starwarsplanetsapi.repository.PlanetRepository;
+import io.micrometer.core.instrument.Counter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Service;
@@ -14,9 +15,12 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class PlanetService {
     private final PlanetRepository repository;
+    private final Counter createdPlanetsCounter;
 
     public Planet create(Planet planet){
-        return repository.save(planet);
+        Planet saved = repository.save(planet);
+        createdPlanetsCounter.increment();
+        return saved;
     }
 
     public Optional<Planet> get(Long id){ return repository.findById(id); }
