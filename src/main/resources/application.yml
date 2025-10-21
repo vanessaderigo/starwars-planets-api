@@ -1,5 +1,4 @@
 spring:
-
   application:
     name: starwars-planets-api
 
@@ -12,3 +11,12 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus,metrics,health
+
+server:
+  port: 8080
