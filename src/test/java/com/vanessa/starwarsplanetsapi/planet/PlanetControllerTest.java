@@ -1,9 +1,9 @@
 package com.vanessa.starwarsplanetsapi.planet;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.vanessa.starwarsplanetsapi.planet.controller.PlanetController;
-import com.vanessa.starwarsplanetsapi.planet.domain.Planet;
-import com.vanessa.starwarsplanetsapi.planet.service.PlanetService;
+import com.vanessa.starwarsplanetsapi.controller.PlanetController;
+import com.vanessa.starwarsplanetsapi.domain.Planet;
+import com.vanessa.starwarsplanetsapi.service.PlanetService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;

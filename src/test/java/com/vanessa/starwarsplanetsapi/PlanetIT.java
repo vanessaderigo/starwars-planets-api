@@ -1,6 +1,6 @@
 package com.vanessa.starwarsplanetsapi;
 
-import com.vanessa.starwarsplanetsapi.planet.domain.Planet;
+import com.vanessa.starwarsplanetsapi.domain.Planet;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

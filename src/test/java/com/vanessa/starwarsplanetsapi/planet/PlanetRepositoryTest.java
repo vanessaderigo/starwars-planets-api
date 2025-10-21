@@ -1,8 +1,8 @@
 package com.vanessa.starwarsplanetsapi.planet;
 
-import com.vanessa.starwarsplanetsapi.planet.domain.Planet;
-import com.vanessa.starwarsplanetsapi.planet.domain.QueryBuilder;
-import com.vanessa.starwarsplanetsapi.planet.repository.PlanetRepository;
+import com.vanessa.starwarsplanetsapi.domain.Planet;
+import com.vanessa.starwarsplanetsapi.domain.QueryBuilder;
+import com.vanessa.starwarsplanetsapi.repository.PlanetRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

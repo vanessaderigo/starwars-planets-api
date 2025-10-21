@@ -1,9 +1,9 @@
 package com.vanessa.starwarsplanetsapi.planet;
 
-import com.vanessa.starwarsplanetsapi.planet.domain.Planet;
-import com.vanessa.starwarsplanetsapi.planet.domain.QueryBuilder;
-import com.vanessa.starwarsplanetsapi.planet.repository.PlanetRepository;
-import com.vanessa.starwarsplanetsapi.planet.service.PlanetService;
+import com.vanessa.starwarsplanetsapi.domain.Planet;
+import com.vanessa.starwarsplanetsapi.domain.QueryBuilder;
+import com.vanessa.starwarsplanetsapi.repository.PlanetRepository;
+import com.vanessa.starwarsplanetsapi.service.PlanetService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;

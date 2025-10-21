@@ -1,6 +1,6 @@
 package com.vanessa.starwarsplanetsapi.commom;
 
-import com.vanessa.starwarsplanetsapi.planet.domain.Planet;
+import com.vanessa.starwarsplanetsapi.domain.Planet;
 
 import java.util.ArrayList;
 import java.util.List;
