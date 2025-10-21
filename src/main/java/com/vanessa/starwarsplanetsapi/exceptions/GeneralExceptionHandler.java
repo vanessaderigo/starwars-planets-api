@@ -1,5 +1,7 @@
 package com.vanessa.starwarsplanetsapi.exceptions;
 
+import io.micrometer.core.instrument.Counter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpHeaders;
@@ -13,7 +15,10 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @ControllerAdvice
+@RequiredArgsConstructor
 public class GeneralExceptionHandler extends ResponseEntityExceptionHandler {
+    private final Counter failedPlanetCreationsCounter;
+
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         return super.handleMethodArgumentNotValid(ex, headers, HttpStatus.UNPROCESSABLE_ENTITY, request);
@@ -21,6 +26,7 @@ public class GeneralExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     private ResponseEntity<Object> handleConflict(DataIntegrityViolationException exception){
+        failedPlanetCreationsCounter.increment();
         return ResponseEntity.status(HttpStatus.CONFLICT).body(exception.getMessage());
     }
 

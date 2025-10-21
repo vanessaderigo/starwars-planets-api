@@ -13,4 +13,11 @@ public class MetricsConfiguration {
                 .description("Total number of successfully created planets")
                 .register(meterRegistry);
     }
+
+    @Bean
+    public Counter failedPlanetCreationsCounter(MeterRegistry meterRegistry){
+        return Counter.builder("failed_planet_creations_total")
+                .description("Total number of failed planet creation attempts")
+                .register(meterRegistry);
+    }
 }
