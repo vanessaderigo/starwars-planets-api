@@ -2,61 +2,62 @@
   StarWars Planets API
 </h1>
 
-<p align="center">
-  <a href="#-project">Projeto</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
-  <a href="#-technologies">Tecnologias</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
-  <a href="#-configuration">Configuração</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
-  <a href="#-developing">Construir e Executar</a>
-</p>
-
-<br>
-
 ## Projeto
 
 Serviço web que disponibiliza informações sobre os planetas do universo Star Wars.
-
-Projeto foi elaborado durante o curso [Testes automatizados na prática com Spring Boot](https://www.udemy.com/course/testes-automatizados-na-pratica-com-spring-boot/?referralCode=7F6C5AA14AE558497FE0), em que o foco foi a criação de testes automatizados.
+Elaborado durante o curso [Testes automatizados na prática com Spring Boot](https://www.udemy.com/course/testes-automatizados-na-pratica-com-spring-boot/?referralCode=7F6C5AA14AE558497FE0), com foco na criação de testes automatizados.
 
 
 ## Tecnologias Utilizadas
 
-- MySQL
 - Java
-- Maven
 - Spring Boot
-- Spring Testing
-- JUnit 5
-- Mockito
-- AssertJ
-- Hamcrest
-- Jacoco
-- Pitest
+- Maven
+- MySQL
+- Docker & Docker Compose
+- Prometheus
+- JUnit 5, Mockito, AssertJ, Hamcrest
+- Jacoco (cobertura de testes)
+- Pitest (testes de mutação)
 
 ## Configuração
 
-O projeto requer um banco de dados Mysql, então é necessário criar uma base de dados com os seguintes comandos:
+Antes de iniciar, é necessário possuir instalado:
+- [Docker](https://docs.docker.com/get-started/get-docker/)
 
+A aplicação utiliza variáveis de ambiente para definir as credenciais do banco de dados.
+Crie um arquivo .env na raiz do projeto com o seguinte conteúdo:
 ```
-$ sudo mysql
-
-CREATE USER 'user'@'%' IDENTIFIED BY '1234567';
-GRANT ALL PRIVILEGES ON *.* TO 'user'@'%' WITH GRANT OPTION;
-
-exit
-
-$ mysql -u user -p
-
-CREATE DATABASE starwars;
-
-exit
+MYSQL_ROOT_PASSWORD=xxxxx
+MYSQL_USER_PASSWORD=xxxxx
 ```
+Essas variáveis são utilizadas pelo `docker-compose.yml` para configurar os containers de banco e aplicação.
 
-Durante os testes, as tabelas de banco já serão criadas automaticamente no banco de dados.
+## Executando com Docker
 
-## Como executar
+Para iniciar toda a stack (API + MySQL + Prometheus), execute:
+```
+docker-compose up --build
+```
+Isso fará com que:
+- O MySQL suba com a base starwars já criada;
+- A API seja construída e inicializada na porta 8080;
+- O Prometheus seja iniciado na porta 9090, coletando métricas da aplicação.
 
-Execute o comando:
+Após o build:
+- API disponível em: http://localhost:8080
+- Prometheus disponível em: http://localhost:9090
 
-```sh
-$ ./mvnw clean verify
+## Monitoramento com Prometheus
+
+A aplicação expõe métricas compatíveis com o Prometheus no endpoint: 
+```
+http://localhost:8080/actuator/prometheus
+```
+Essas métricas podem ser visualizadas e consultadas através da interface web do Prometheus em `http://localhost:9090`.
+
+## Testes
+Para rodar os testes localmente (sem Docker), execute:
+```
+./mvnw clean verify
 ```
