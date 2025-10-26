@@ -1,4 +1,5 @@
 services:
+
   prometheus:
     image: prom/prometheus
     volumes:
@@ -7,5 +8,33 @@ services:
     ports:
       - "9090:9090"
 
+  mysql:
+    image: mysql:8.0.42
+    container_name: mysql
+    volumes:
+      - database:/var/lib/mysql
+    ports:
+      - "3316:3306" #############
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: starwars
+      MYSQL_USER: user
+      MYSQL_PASSWORD: ${MYSQL_USER_PASSWORD}
+
+  api:
+    build: .
+    container_name: starwars-api
+    depends_on:
+      - mysql
+      - prometheus
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/starwars
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_USER_PASSWORD}
+    restart: always
+
 volumes:
   prometheus_data:
+  database:
