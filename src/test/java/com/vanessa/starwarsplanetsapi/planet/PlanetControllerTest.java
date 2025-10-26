@@ -1,12 +1,12 @@
 package com.vanessa.starwarsplanetsapi.planet;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.vanessa.starwarsplanetsapi.controller.PlanetController;
 import com.vanessa.starwarsplanetsapi.domain.Planet;
 import com.vanessa.starwarsplanetsapi.service.PlanetService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.MediaType;
@@ -25,7 +25,8 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(PlanetController.class)
+@SpringBootTest
+@AutoConfigureMockMvc
 public class PlanetControllerTest {
     @MockitoBean
     private PlanetService service;

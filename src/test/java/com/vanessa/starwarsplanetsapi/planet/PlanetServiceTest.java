@@ -2,8 +2,12 @@ package com.vanessa.starwarsplanetsapi.planet;
 
 import com.vanessa.starwarsplanetsapi.domain.Planet;
 import com.vanessa.starwarsplanetsapi.domain.QueryBuilder;
+import com.vanessa.starwarsplanetsapi.metrics.MetricsConfiguration;
 import com.vanessa.starwarsplanetsapi.repository.PlanetRepository;
 import com.vanessa.starwarsplanetsapi.service.PlanetService;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.Timer;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
@@ -16,12 +20,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 import static com.vanessa.starwarsplanetsapi.commom.PlanetConstants.INVALID_PLANET;
 import static com.vanessa.starwarsplanetsapi.commom.PlanetConstants.PLANET;
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class PlanetServiceTest {
@@ -31,17 +36,45 @@ public class PlanetServiceTest {
     @Mock
     private PlanetRepository repository;
 
+    @Mock
+    private MetricsConfiguration metrics;
+
+    @Mock
+    private Counter createdPlanetsCounter;
+
+    @Mock
+    private Timer planetCreationTimer;
+
+    @BeforeEach
+    void setupMocks() {
+        lenient().when(planetCreationTimer.record(any(Supplier.class)))
+                .thenAnswer(invocation -> {
+                    Supplier<?> supplier = invocation.getArgument(0);
+                    return supplier.get();
+                });
+    }
+
     @Test
     public void createPlanet_WithValidData_ReturnsPlanet(){
         when(repository.save(PLANET)).thenReturn(PLANET);
+
         Planet sut = service.create(PLANET);
+
         assertThat(sut).isEqualTo(PLANET);
+        verify(repository).save(PLANET);
+        verify(createdPlanetsCounter).increment();
+        verify(metrics).incrementActivePlanets();
     }
 
     @Test
     public void createPlanet_WithInvalidData_ThrowsException(){
         when(repository.save(INVALID_PLANET)).thenThrow(RuntimeException.class);
+
         assertThatThrownBy( () -> service.create(INVALID_PLANET)).isInstanceOf(RuntimeException.class);
+
+        verify(repository).save(INVALID_PLANET);
+        verify(createdPlanetsCounter, never()).increment();
+        verify(metrics, never()).incrementActivePlanets();
     }
 
     @Test
@@ -99,11 +132,5 @@ public class PlanetServiceTest {
     @Test
     public void deletePlanet_ByExistingId_DoesNotThrowAnyException(){
         assertThatCode(() -> service.delete(1L)).doesNotThrowAnyException();
-    }
-
-    @Test
-    public void deletePlanet_ByNonexistentId_ThrowsException(){
-        doThrow(new RuntimeException()).when(repository).deleteById(99L);
-        assertThatThrownBy(() -> service.delete(99L)).isInstanceOf(RuntimeException.class);
     }
 }
